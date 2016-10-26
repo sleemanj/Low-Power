@@ -3,6 +3,12 @@
 
 #include "Arduino.h"
 
+//FIXME
+#if defined (__AVR_HAVE_PRR1_PRUSART3)
+#define power_usart3_enable() (PRR1 &= (uint8_t) ~ (1 << PRUSART3))
+#define power_usart3_disable() (PRR1 |= (uint8_t) (1 << PRUSART3))
+#endif
+
 enum period_t
 {
 	SLEEP_15MS,
