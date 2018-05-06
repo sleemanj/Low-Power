@@ -1,5 +1,6 @@
 ### Low-Power
 Lightweight low power library for Arduino with Atmega328PB support.
+This is a fork of the <a href="https://github.com/rocketscream/Low-Power">official Low-Power library from rocketscream version 1.60</a> with added Atmega328PB support.
 
 Version: 1.70
 
