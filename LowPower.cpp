@@ -750,6 +750,47 @@ void	LowPowerClass::idle(period_t period, adc_t adc, timer5_t timer5,
 #endif
 
 
+/*******************************************************************************
+* Name: idle
+* Description: Putting AtTiny85/AtTiny84 into idle state. Please make sure
+*			   you understand the implication and result of disabling module.
+*			   Take note that extra Timer 5, 4, 3 compared to an ATmega328P/168.
+*			   Also take note that extra USART 1 compared to an
+*			   ATmega328P/168.
+*
+* Argument  	Description
+* =========  	===========
+* 1. period     Duration of low power mode. Use SLEEP_FOREVER to use other wake
+*				up resource:
+*				(a) SLEEP_15MS - 15 ms sleep
+*				(b) SLEEP_30MS - 30 ms sleep
+*				(c) SLEEP_60MS - 60 ms sleep
+*				(d) SLEEP_120MS - 120 ms sleep
+*				(e) SLEEP_250MS - 250 ms sleep
+*				(f) SLEEP_500MS - 500 ms sleep
+*				(g) SLEEP_1S - 1 s sleep
+*				(h) SLEEP_2S - 2 s sleep
+*				(i) SLEEP_4S - 4 s sleep
+*				(j) SLEEP_8S - 8 s sleep
+*				(k) SLEEP_FOREVER - Sleep without waking up through WDT
+*
+* 2. adc		ADC module disable control:
+*				(a) ADC_OFF - Turn off ADC module
+*				(b) ADC_ON - Leave ADC module in its default state
+*
+* 3. timer1		Timer 1 module disable control:
+*				(a) TIMER1_OFF - Turn off Timer 1 module
+*				(b) TIMER1_ON - Leave Timer 1 module in its default state
+*
+* 4. timer0		Timer 0 module disable control:
+*				(a) TIMER0_OFF - Turn off Timer 0 module
+*				(b) TIMER0_ON - Leave Timer 0 module in its default state
+*
+* 5. usi		SPI module disable control:
+*				(a) SPI_OFF - Turn off SPI module
+*				(b) SPI_ON - Leave SPI module in its default state
+*
+*******************************************************************************/
 #if defined (__AVR_ATtiny85__) || defined (__AVR_ATtiny84__)
 void	LowPowerClass::idle(period_t period, adc_t adc, timer1_t timer1, timer0_t timer0, usi_t usi)
 {
