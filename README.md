@@ -1,9 +1,9 @@
 ### Low-Power
-Lightweight low power library for Arduino.
+Lightweight low power library for AVR/SAMD21 Moteino boards.
 
 Version: 1.70
 
-Date: 04-06-2018
+Date: 08-08-2018
 
 Devices Supported:
 * ATMega168
@@ -14,6 +14,3 @@ Devices Supported:
 * ATMega2560
 * ATMega256RFR2
 * ATSAMD21G18A
-
-####Notes:
-External interrupt during standby on ATSAMD21G18A requires a patch to the <a href="https://github.com/arduino/ArduinoCore-samd">Arduino SAMD Core</a> in order for it to work. Fix is provided by this particular <a href="https://github.com/arduino/ArduinoCore-samd/pull/90">pull request</a>.
