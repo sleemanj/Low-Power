@@ -73,7 +73,7 @@ do { 						\
 } while (0);
 
 // Only Pico Power devices can change BOD settings through software
-#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega1284P__)
+#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega1284P__)
 #define	lowPowerBodOff(mode)\
 do { 						\
       set_sleep_mode(mode); \
@@ -866,7 +866,7 @@ void	LowPowerClass::powerDown(period_t period, adc_t adc, bod_t bod)
 	}
 	if (bod == BOD_OFF)	
 	{
-		#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega1284P__)
+		#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega1284P__)
 			lowPowerBodOff(SLEEP_MODE_PWR_DOWN);
 		#else
 			lowPowerBodOn(SLEEP_MODE_PWR_DOWN);
@@ -953,7 +953,7 @@ void	LowPowerClass::powerSave(period_t period, adc_t adc, bod_t bod,
 	
 	if (bod == BOD_OFF)	
 	{
-		#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega1284P__)
+		#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega1284P__)
 			lowPowerBodOff(SLEEP_MODE_PWR_SAVE);
 		#else
 			lowPowerBodOn(SLEEP_MODE_PWR_SAVE);
@@ -1018,7 +1018,7 @@ void	LowPowerClass::powerStandby(period_t period, adc_t adc, bod_t bod)
 	
 	if (bod == BOD_OFF)	
 	{
-		#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega1284P__)
+		#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega1284P__)
 			lowPowerBodOff(SLEEP_MODE_STANDBY);
 		#else
 			lowPowerBodOn(SLEEP_MODE_STANDBY);
@@ -1096,7 +1096,7 @@ void	LowPowerClass::powerExtStandby(period_t period, adc_t adc, bod_t bod,
 	}
 	if (bod == BOD_OFF)	
 	{
-		#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega1284P__)
+		#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega1284P__)
 			lowPowerBodOff(SLEEP_MODE_EXT_STANDBY);
 		#else
 			lowPowerBodOn(SLEEP_MODE_EXT_STANDBY);
