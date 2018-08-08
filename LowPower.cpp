@@ -73,7 +73,7 @@ do { 						\
 } while (0);
 
 // Only Pico Power devices can change BOD settings through software
-#if defined __AVR_ATmega328P__
+#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega1284P__)
 #define	lowPowerBodOff(mode)\
 do { 						\
       set_sleep_mode(mode); \
@@ -866,7 +866,7 @@ void	LowPowerClass::powerDown(period_t period, adc_t adc, bod_t bod)
 	}
 	if (bod == BOD_OFF)	
 	{
-		#if defined __AVR_ATmega328P__
+		#if defined(__AVR_ATmega328P__) || defined(__AVR_ATmega1284P__)
 			lowPowerBodOff(SLEEP_MODE_PWR_DOWN);
 		#else
 			lowPowerBodOn(SLEEP_MODE_PWR_DOWN);
