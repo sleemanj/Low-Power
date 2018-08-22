@@ -8,6 +8,7 @@ Date: 04-06-2018
 Devices Supported:
 * ATMega168
 * ATMega328P
+* ATMega328PB
 * ATMega32U4
 * ATMega644P
 * ATMega1284P

@@ -66,11 +66,24 @@ enum timer0_t
 	TIMER0_ON
 };
 
+#if defined __AVR_ATmega328PB__
+enum spi1_t
+{
+  SPI1_OFF,
+  SPI1_ON
+};
+ enum spi0_t
+{
+  SPI0_OFF,
+  SPI0_ON
+};
+#else
 enum spi_t
 {
 	SPI_OFF,
 	SPI_ON
 };
+#endif
 
 enum usart0_t
 {
@@ -96,11 +109,29 @@ enum usart3_t
 	USART3_ON
 };
 
+#if defined __AVR_ATmega328PB__
+enum twi1_t
+{
+  TWI1_OFF,
+  TWI1_ON
+};
+ enum twi0_t
+{
+  TWI0_OFF,
+  TWI0_ON
+};
+ enum ptc_t
+{
+  PTC_OFF,
+  PTC_ON
+};
+#else
 enum twi_t
 {
 	TWI_OFF,
 	TWI_ON
 };
+#endif
 
 enum usb_t
 {
@@ -126,7 +157,7 @@ class LowPowerClass
 	public:
 		#if defined (__AVR__)
 		
-			#if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega168__) 
+			#if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega168__)
 				void	idle(period_t period, adc_t adc, timer2_t timer2, 
 						     timer1_t timer1, timer0_t timer0, spi_t spi,
 					         usart0_t usart0, twi_t twi);
@@ -134,6 +165,14 @@ class LowPowerClass
 				void	idle(period_t period, adc_t adc, timer2_t timer2,
 							 timer1_t timer1, timer0_t timer0, spi_t spi,
 							 usart1_t usart1, usart0_t usart0, twi_t twi);
+      #elif defined __AVR_ATmega328PB__
+        void  idle(period_t period, adc_t adc, 
+               timer4_t timer4, timer3_t timer3, timer2_t timer2,
+               timer1_t timer1, timer0_t timer0, 
+               spi1_t spi1, spi0_t spi0,
+               usart1_t usart1, usart0_t usart0, 
+               twi1_t twi1, twi0_t twi0,
+               ptc_t ptc);
 			#elif defined __AVR_ATmega2560__
 				void	idle(period_t period, adc_t adc, timer5_t timer5, 
 							 timer4_t timer4, timer3_t timer3, timer2_t timer2,
@@ -153,7 +192,7 @@ class LowPowerClass
 			#elif (defined __AVR_ATtiny85__) || (defined __AVR_ATtiny84__)	
 				 void idle(period_t period, adc_t adc, timer1_t timer1, timer0_t timer0, usi_t usi);
 			#else
-				#error "Please ensure chosen MCU is either 168, 328P, 32U4, 2560 or 256RFR2."
+				#error "Unsupported Microcontroller"
 			#endif
 			
 			#if !((defined __AVR_ATtiny85__) || (defined __AVR_ATtiny84__))	

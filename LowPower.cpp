@@ -36,6 +36,7 @@
 	#include <avr/wdt.h>
 	#include <avr/power.h>
 	#include <avr/interrupt.h>
+	#include "power2.h"
 #elif defined (__arm__)
 
 #else
@@ -46,7 +47,7 @@
 
 #if defined (__AVR__)
 // Only Pico Power devices can change BOD settings through software
-#if defined __AVR_ATmega328P__
+#if defined __AVR_ATmega328P__ || defined (__AVR_ATmega328PB__)
 #ifndef sleep_bod_disable
 #define sleep_bod_disable() 										\
 do { 																\
@@ -76,7 +77,7 @@ do { 						\
 } while (0);
 
 // Only Pico Power devices can change BOD settings through software
-#if defined __AVR_ATmega328P__
+#if defined __AVR_ATmega328P__ || defined (__AVR_ATmega328PB__) || defined(__AVR_ATmega644P__) || defined (__AVR_ATmega1284P__)
 #define	lowPowerBodOff(mode)\
 do { 						\
       set_sleep_mode(mode); \
@@ -157,7 +158,7 @@ do { 						\
 *				(b) TWI_ON - Leave TWI module in its default state
 *
 *******************************************************************************/
-#if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega168__)
+#if defined (__AVR_ATmega328P__) || defined (__AVR_ATmega168__) || defined (__AVR_ATmega1284P__)
 void	LowPowerClass::idle(period_t period, adc_t adc, timer2_t timer2, 
 							timer1_t timer1, timer0_t timer0,
 							spi_t spi, usart0_t usart0,	twi_t twi)
@@ -219,6 +220,162 @@ void	LowPowerClass::idle(period_t period, adc_t adc, timer2_t timer2,
 	if (spi == SPI_OFF)			power_spi_enable();
 	if (usart0 == USART0_OFF)	power_usart0_enable();
 	if (twi == TWI_OFF)			power_twi_enable();
+}
+#endif
+
+/*******************************************************************************
+* Name: idle
+* Description: Putting ATmega328PB into idle state. Please make sure you 
+*              understand the implication and result of disabling module.
+*
+* Argument    Description
+* =========   ===========
+* 1. period   Duration of low power mode. Use SLEEP_FOREVER to use other wake
+*       up resource:
+*       (a) SLEEP_15MS - 15 ms sleep
+*       (b) SLEEP_30MS - 30 ms sleep
+*       (c) SLEEP_60MS - 60 ms sleep
+*       (d) SLEEP_120MS - 120 ms sleep
+*       (e) SLEEP_250MS - 250 ms sleep
+*       (f) SLEEP_500MS - 500 ms sleep
+*       (g) SLEEP_1S - 1 s sleep
+*       (h) SLEEP_2S - 2 s sleep
+*       (i) SLEEP_4S - 4 s sleep
+*       (j) SLEEP_8S - 8 s sleep
+*       (k) SLEEP_FOREVER - Sleep without waking up through WDT
+*
+* 2. adc    ADC module disable control:
+*       (a) ADC_OFF - Turn off ADC module
+*       (b) ADC_ON - Leave ADC module in its default state
+*
+* 3. timer4   Timer 4 module disable control:
+*       (a) TIMER4_OFF - Turn off Timer 2 module
+*       (b) TIMER4_ON - Leave Timer 2 module in its default state
+*
+* 
+* 4. timer3   Timer 3 module disable control:
+*       (a) TIMER4_OFF - Turn off Timer 2 module
+*       (b) TIMER4_ON - Leave Timer 2 module in its default state
+*
+* 5. timer2   Timer 2 module disable control:
+*       (a) TIMER2_OFF - Turn off Timer 2 module
+*       (b) TIMER2_ON - Leave Timer 2 module in its default state
+*
+* 6. timer1   Timer 1 module disable control:
+*       (a) TIMER1_OFF - Turn off Timer 1 module
+*       (b) TIMER1_ON - Leave Timer 1 module in its default state
+*
+* 7. timer0   Timer 0 module disable control:
+*       (a) TIMER0_OFF - Turn off Timer 0 module
+*       (b) TIMER0_ON - Leave Timer 0 module in its default state
+*
+* 7. spi1    SPI 1 module disable control:
+*       (a) SPI1_OFF - Turn off SPI module
+*       (b) SPI1_ON - Leave SPI module in its default state
+
+* 8. spi0    SPI 0 module disable control:
+*       (a) SPI0_OFF - Turn off SPI module
+*       (b) SPI0_ON - Leave SPI module in its default state
+*
+* 8. usart1   USART1 module disable control:
+*       (a) USART1_OFF - Turn off USART0  module
+*       (b) USART1_ON - Leave USART0 module in its default state
+*
+* 8. usart0   USART0 module disable control:
+*       (a) USART0_OFF - Turn off USART0  module
+*       (b) USART0_ON - Leave USART0 module in its default state
+*
+* 8. twi1   TWI module disable control:
+*       (a) TWI1_OFF - Turn off TWI module
+*       (b) TWI1_ON - Leave TWI module in its default state
+*
+* 8. twi0   TWI module disable control:
+*       (a) TWI0_OFF - Turn off TWI module
+*       (b) TWI0_ON - Leave TWI module in its default state
+*
+* 8. ptc   PTc module disable control:
+*       (a) PTC_OFF - Turn off PTC module
+*       (b) PTC_ON - Leave PTC module in its default state
+**
+*******************************************************************************/
+
+#if defined (__AVR_ATmega328PB__)
+void  LowPowerClass::idle(period_t period, adc_t adc, 
+               timer4_t timer4, timer3_t timer3, timer2_t timer2,
+               timer1_t timer1, timer0_t timer0, 
+               spi1_t spi1, spi0_t spi0,
+               usart1_t usart1, usart0_t usart0, 
+               twi1_t twi1, twi0_t twi0, ptc_t ptc)
+{
+  // Temporary clock source variable 
+  unsigned char clockSource = 0;
+  
+  if (timer2 == TIMER2_OFF)
+  {
+    if (TCCR2B & CS22) clockSource |= (1 << CS22);
+    if (TCCR2B & CS21) clockSource |= (1 << CS21);
+    if (TCCR2B & CS20) clockSource |= (1 << CS20);
+  
+    // Remove the clock source to shutdown Timer2
+    TCCR2B &= ~(1 << CS22);
+    TCCR2B &= ~(1 << CS21);
+    TCCR2B &= ~(1 << CS20);
+    
+    power_timer2_disable();
+  }
+  
+  if (adc == ADC_OFF) 
+  {
+    ADCSRA &= ~(1 << ADEN);
+    power_adc_disable();
+  }
+  
+  if (timer4 == TIMER4_OFF) power_timer4_disable();
+  if (timer3 == TIMER3_OFF) power_timer3_disable();
+  if (timer1 == TIMER1_OFF) power_timer1_disable();
+  if (timer0 == TIMER0_OFF) power_timer0_disable();
+  if (spi1 == SPI1_OFF)     power_spi1_disable();
+  if (spi0 == SPI0_OFF)     power_spi0_disable();
+  if (usart1 == USART1_OFF) power_usart1_disable();
+  if (usart0 == USART0_OFF) power_usart0_disable();
+  if (twi1 == TWI1_OFF)     power_twi1_disable();
+  if (twi0 == TWI0_OFF)     power_twi0_disable();
+  if (ptc == PTC_OFF)       power_ptc_disable();
+  
+  
+  if (period != SLEEP_FOREVER)
+  {
+    wdt_enable(period);
+    WDTCSR |= (1 << WDIE);  
+  }
+  
+  lowPowerBodOn(SLEEP_MODE_IDLE);
+  
+  if (adc == ADC_OFF)
+  {
+    power_adc_enable();
+    ADCSRA |= (1 << ADEN);
+  }
+  
+  if (timer2 == TIMER2_OFF)
+  {
+    if (clockSource & CS22) TCCR2B |= (1 << CS22);
+    if (clockSource & CS21) TCCR2B |= (1 << CS21);
+    if (clockSource & CS20) TCCR2B |= (1 << CS20);
+    
+    power_timer2_enable();
+  }
+  if (timer4 == TIMER4_OFF) power_timer4_enable();  
+  if (timer3 == TIMER3_OFF) power_timer3_enable();  
+  if (timer1 == TIMER1_OFF) power_timer1_enable();  
+  if (timer0 == TIMER0_OFF) power_timer0_enable();  
+  if (spi1 == SPI1_OFF)     power_spi1_enable();
+  if (spi0 == SPI0_OFF)     power_spi0_enable();
+  if (usart1 == USART1_OFF) power_usart1_enable();
+  if (usart0 == USART0_OFF) power_usart0_enable();
+  if (twi1 == TWI1_OFF)     power_twi1_enable();
+  if (twi0 == TWI0_OFF)     power_twi0_enable();
+  if (ptc == PTC_OFF)       power_ptc_enable();
 }
 #endif
 
@@ -983,7 +1140,7 @@ void	LowPowerClass::powerSave(period_t period, adc_t adc, bod_t bod,
 	
 	if (bod == BOD_OFF)	
 	{
-		#if defined __AVR_ATmega328P__
+		#if defined __AVR_ATmega328P__ || defined (__AVR_ATmega328PB__) || defined(__AVR_ATmega644P__) || defined (__AVR_ATmega1284P__)
 			lowPowerBodOff(SLEEP_MODE_PWR_SAVE);
 		#else
 			lowPowerBodOn(SLEEP_MODE_PWR_SAVE);
@@ -1048,7 +1205,7 @@ void	LowPowerClass::powerStandby(period_t period, adc_t adc, bod_t bod)
 	
 	if (bod == BOD_OFF)	
 	{
-		#if defined __AVR_ATmega328P__
+		#if defined __AVR_ATmega328P__ || defined (__AVR_ATmega328PB__) || defined(__AVR_ATmega644P__) || defined (__AVR_ATmega1284P__)
 			lowPowerBodOff(SLEEP_MODE_STANDBY);
 		#else
 			lowPowerBodOn(SLEEP_MODE_STANDBY);
@@ -1126,7 +1283,7 @@ void	LowPowerClass::powerExtStandby(period_t period, adc_t adc, bod_t bod,
 	}
 	if (bod == BOD_OFF)	
 	{
-		#if defined __AVR_ATmega328P__
+		#if defined __AVR_ATmega328P__ || defined (__AVR_ATmega328PB__) || defined(__AVR_ATmega644P__) || defined (__AVR_ATmega1284P__)
 			lowPowerBodOff(SLEEP_MODE_EXT_STANDBY);
 		#else
 			lowPowerBodOn(SLEEP_MODE_EXT_STANDBY);
@@ -1199,7 +1356,7 @@ void	LowPowerClass::powerDown(period_t period, adc_t adc, bod_t bod)
 	}
 	if (bod == BOD_OFF)	
 	{
-		#if defined __AVR_ATmega328P__
+		#if defined __AVR_ATmega328P__ || defined (__AVR_ATmega328PB__) || defined(__AVR_ATmega644P__) || defined (__AVR_ATmega1284P__)
 			lowPowerBodOff(SLEEP_MODE_PWR_DOWN);
 		#else
 			lowPowerBodOn(SLEEP_MODE_PWR_DOWN);
