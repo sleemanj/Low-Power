@@ -1032,10 +1032,11 @@ void	LowPowerClass::idle(period_t period, adc_t adc, timer1_t timer1, timer0_t t
 void	LowPowerClass::adcNoiseReduction(period_t period, adc_t adc, 
 										 timer2_t timer2)
 {
-	// Temporary clock source variable 
-	unsigned char clockSource = 0;
 	
 	#if !defined(__AVR_ATmega32U4__)
+	// Temporary clock source variable 
+	unsigned char clockSource = 0;
+
 	if (timer2 == TIMER2_OFF)
 	{
 		if (TCCR2B & CS22) clockSource |= (1 << CS22);
@@ -1119,10 +1120,10 @@ void	LowPowerClass::adcNoiseReduction(period_t period, adc_t adc,
 void	LowPowerClass::powerSave(period_t period, adc_t adc, bod_t bod, 
 							     timer2_t timer2)
 {
-	// Temporary clock source variable 
+	#if !defined(__AVR_ATmega32U4__)
+	// Temporary clock source variable
 	unsigned char clockSource = 0;
 
-	#if !defined(__AVR_ATmega32U4__)
 	if (timer2 == TIMER2_OFF)
 	{
 		if (TCCR2B & CS22) clockSource |= (1 << CS22);
@@ -1264,10 +1265,10 @@ void	LowPowerClass::powerStandby(period_t period, adc_t adc, bod_t bod)
 void	LowPowerClass::powerExtStandby(period_t period, adc_t adc, bod_t bod, 
 									   timer2_t timer2)
 {
-	// Temporary clock source variable 
-	unsigned char clockSource = 0;
-	
 	#if !defined(__AVR_ATmega32U4__)
+	// Temporary clock source variable
+	unsigned char clockSource = 0;
+
 	if (timer2 == TIMER2_OFF)
 	{
 		if (TCCR2B & CS22) clockSource |= (1 << CS22);
