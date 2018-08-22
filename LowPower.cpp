@@ -944,12 +944,14 @@ void	LowPowerClass::idle(period_t period, adc_t adc, timer5_t timer5,
 *				(a) TIMER0_OFF - Turn off Timer 0 module
 *				(b) TIMER0_ON - Leave Timer 0 module in its default state
 *
-* 5. usi		SPI module disable control:
+* 5. usi		USI module disable control:
 *				(a) SPI_OFF - Turn off SPI module
 *				(b) SPI_ON - Leave SPI module in its default state
 *
 *******************************************************************************/
-#if defined (__AVR_ATtiny85__) || defined (__AVR_ATtiny84__)
+#if defined (__AVR_ATtiny85__) || defined (__AVR_ATtiny84__) \
+ || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny44__)   \
+ || defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny24__)
 void	LowPowerClass::idle(period_t period, adc_t adc, timer1_t timer1, timer0_t timer0, usi_t usi)
 {
 	// Temporary clock source variable 
@@ -968,11 +970,7 @@ void	LowPowerClass::idle(period_t period, adc_t adc, timer1_t timer1, timer0_t t
 	if (period != SLEEP_FOREVER)
 	{
 		wdt_enable(period);
-		#if defined (__AVR_ATtiny85__) || defined (__AVR_ATtiny84__)
-			WDTCR |= (1 << WDIE);	
-		#else
-			WDTCSR |= (1 << WDIE);	
-		#endif
+    WDTCR |= (1 << WDIE);	
 	}
 	
 	lowPowerBodOn(SLEEP_MODE_IDLE);
@@ -990,8 +988,9 @@ void	LowPowerClass::idle(period_t period, adc_t adc, timer1_t timer1, timer0_t t
 
 #endif
 
-#if !((defined __AVR_ATtiny85__) || (defined __AVR_ATtiny84__))
-
+#if !((defined __AVR_ATtiny85__) || (defined __AVR_ATtiny84__)) \
+ || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny44__)   \
+ || defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny24__)
 /*******************************************************************************
 * Name: adcNoiseReduction
 * Description: Putting microcontroller into ADC noise reduction state. This is
@@ -1349,11 +1348,7 @@ void	LowPowerClass::powerDown(period_t period, adc_t adc, bod_t bod)
 	if (period != SLEEP_FOREVER)
 	{
 		wdt_enable(period);
-		#if defined (__AVR_ATtiny85__) || defined (__AVR_ATtiny84__)
-			WDTCR |= (1 << WDIE);	
-		#else
-			WDTCSR |= (1 << WDIE);	
-		#endif
+		WDTCR |= (1 << WDIE);	
 	}
 	if (bod == BOD_OFF)	
 	{
