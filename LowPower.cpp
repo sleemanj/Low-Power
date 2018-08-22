@@ -77,6 +77,7 @@ do { 						\
 } while (0);
 
 // Only Pico Power devices can change BOD settings through software
+
 #if defined __AVR_ATmega328P__ || defined (__AVR_ATmega328PB__) || defined(__AVR_ATmega644P__) || defined (__AVR_ATmega1284P__)
 #define	lowPowerBodOff(mode)\
 do { 						\
